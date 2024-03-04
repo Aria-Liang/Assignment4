@@ -41,6 +41,7 @@ app.use((req, res, next) => {
   }
 
   console.log(`userIp: ${userIp}, deviceType: ${deviceType}`);
+  next();
 });
 
 app.use("/https-web-service/v1", startup);
