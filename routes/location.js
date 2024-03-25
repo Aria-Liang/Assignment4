@@ -1,27 +1,19 @@
-const express = require("express");
+import express from "express";
+import { getZipCode } from "../controller/getZipCode.js";
+import { getLoggerInstance } from "../logger.js";
+
 const location = express.Router();
-location.get("/user-location", (req, res) => {
+
+const logger = getLoggerInstance;
+
+location.get("/user-location", async (req, res) => {
+  logger.info("Entering user-location routes");
   const userIp = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+  const userInformation = await getZipCode(userIp);
   const userDevice = req.header("User-Agent");
-  let deviceType = "Unknown OS";
-
-  if (userDevice.includes("Win")) {
-    deviceType = "Windows";
-  } else if (userDevice.includes("Mac")) {
-    deviceType = "macOS";
-  } else if (userDevice.includes("X11") || userDevice.includes("Linux")) {
-    deviceType = "Linux";
-  } else if (
-    userDevice.includes("iPhone") ||
-    userDevice.includes("iPad") ||
-    userDevice.includes("iPod")
-  ) {
-    deviceType = "iOS";
-  } else if (userDevice.includes("Android")) {
-    deviceType = "Android";
-  }
-
-  res.json({ userIp: userIp, deviceType: deviceType });
+  console.log(userInformation, "userInformation");
+  res.json({ userIP: userIp, userDevice: userDevice });
+  logger.info("Exiting user-location route");
 });
 
-module.exports = location;
+export default location;
